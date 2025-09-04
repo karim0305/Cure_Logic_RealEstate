@@ -10,6 +10,7 @@ import { UploadService } from 'src/uploads/upload.service';
 import { CreateNotificationDto } from 'src/notification/dto/create-notification.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotificationPurposeEnum } from 'src/common/enums/notification.enum';
+import { FilterPropertyDto } from './dto/filter.dto';
  
 @Injectable()
 export class PropertyService {
@@ -174,5 +175,23 @@ export class PropertyService {
   // Example:
   // await this.notificationService.send(agentId, 'Your deal request was accepted');
 }
+
+
+//add filter 
+async filterProperties(query: FilterPropertyDto) {
+    const filters: any = {};
+
+    // Mode 1: Location-based
+    if (query.city) filters.city = query.city;
+    if (query.address) filters.address = query.address;
+
+    // Mode 2: Property specs
+    if (query.propertyType) filters.propertyType = query.propertyType;
+    if (query.bedrooms) filters.bedrooms = Number(query.bedrooms);
+    if (query.price) filters.price = Number(query.price);
+    if (query.area) filters.area = Number(query.area);
+
+    return this.propertyModel.find(filters).exec();
+  }
 
 }

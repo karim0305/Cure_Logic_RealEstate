@@ -11,6 +11,7 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { FilterPropertyDto } from './dto/filter.dto';
 
 @ApiTags('Property')
 @Controller('property')
@@ -114,6 +115,12 @@ export class PropertyController {
   @ApiOkResponse({ description: 'Properties retrieved', schema: { properties: { properties: { type: 'array' }, total: { type: 'number' } } } })
   findAll(@Query() searchDto: SearchPropertyDto) {
     return this.propertyService.findAll(searchDto);
+  }
+
+  ///adding filter endpoint
+   @Get('filter')
+  async filterProperties(@Query() query: FilterPropertyDto) {
+    return this.propertyService.filterProperties(query);
   }
 
   // GET /property/:id - Get property details
