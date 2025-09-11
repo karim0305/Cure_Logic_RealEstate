@@ -66,7 +66,7 @@ export class UsersController {
         schema: { properties: { users: { type: 'array', items: { $ref: '#/components/schemas/User' } }, total: { type: 'number' } } }
     })
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(RoleEnum.Admin)
+    @Roles(RoleEnum.Admin, RoleEnum.User)
     async findAll(@Query() query: QueryUserDto) {
         return this.userService.findAllUsers(query);
     }

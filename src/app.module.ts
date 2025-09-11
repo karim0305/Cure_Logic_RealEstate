@@ -10,6 +10,8 @@ import { PropertyModule } from './property/property.module';
 import { AgentModule } from './agent/agent.module';
 import { NotificationModule } from './notification/notification.module';
 import { HistoryModule } from './history/history.module';
+import { PropertyviewsModule } from './propertyviews/propertyviews.module';
+
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { HistoryModule } from './history/history.module';
     AgentModule,
     NotificationModule,
     HistoryModule,
+    PropertyviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

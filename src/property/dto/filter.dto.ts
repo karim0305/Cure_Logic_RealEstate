@@ -1,24 +1,41 @@
-import { IsOptional, IsString, IsNumberString } from 'class-validator';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class FilterPropertyDto {
-  // Mode 1: Location-based
-  @IsOptional() @IsString()
+  @ApiPropertyOptional({ description: 'City name to filter by', example: 'Rahim Yar Khan' })
+  @IsOptional()
+  @IsString()
   city?: string;
 
-  @IsOptional() @IsString()
+  @ApiPropertyOptional({ description: 'Address to filter by', example: 'Street 1' })
+  @IsOptional()
+  @IsString()
   address?: string;
 
-  // Mode 2: Property specs
-  @IsOptional() @IsString()
+  @ApiPropertyOptional({ description: 'Type of property', example: 'office' })
+  @IsOptional()
+  @IsString()
   propertyType?: string;
 
-  @IsOptional() @IsNumberString()
+
+  
+  @ApiPropertyOptional({ description: 'Sale/Rent type', example: 'sale' })
+  @IsOptional()
+  @IsString()
+  type?: string;
+
+  @ApiPropertyOptional({ description: 'Number of bedrooms', example: 3 })
+  @IsOptional()
+  @IsNumber()
   bedrooms?: number;
 
+  @ApiPropertyOptional({ description: 'Price range in format "min-max"', example: '50000-100000' })
+  @IsOptional()
+  @IsString()
+  price?: string;
 
-  @IsOptional() @IsNumberString()
-  price?: number;
-
-  @IsOptional() @IsNumberString()
-  area?: number;
+  @ApiPropertyOptional({ description: 'Area range in format "min-max"', example: '100-200' })
+  @IsOptional()
+  @IsString()
+  area?: string; // <-- single column input like price
 }

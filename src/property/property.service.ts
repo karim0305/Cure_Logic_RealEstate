@@ -25,8 +25,8 @@ export class PropertyService {
   user: any,
   files?: Express.Multer.File[],
 ): Promise<PropertyDocument> {
-  if (!user.roles.includes(RoleEnum.Seller) && !user.roles.includes(RoleEnum.Admin)) {
-    throw new UnauthorizedException('Only sellers, or admins can create properties');
+  if (!user.roles.includes(RoleEnum.User) && !user.roles.includes(RoleEnum.Admin)) {
+    throw new UnauthorizedException('Only users, or admins can create properties');
   }
 
   let imagePaths: string[] = [];
@@ -179,19 +179,49 @@ export class PropertyService {
 
 //add filter 
 async filterProperties(query: FilterPropertyDto) {
-    const filters: any = {};
+  const filters: any = {};
 
-    // Mode 1: Location-based
-    if (query.city) filters.city = query.city;
-    if (query.address) filters.address = query.address;
+  // Location-based
+  if (query.city) filters.city = query.city;
+  if (query.address) filters.address = query.address;
 
-    // Mode 2: Property specs
-    if (query.propertyType) filters.propertyType = query.propertyType;
-    if (query.bedrooms) filters.bedrooms = Number(query.bedrooms);
-    if (query.price) filters.price = Number(query.price);
-    if (query.area) filters.area = Number(query.area);
+  
+ // Property type filter
+if (query.propertyType) filters.propertyType = query.propertyType;
 
-    return this.propertyModel.find(filters).exec();
+// Sale/rent type filter (optional)
+if (query.type) filters.type = query.type;
+
+  // Bedrooms (exact)
+  if (query.bedrooms) filters.bedrooms = Number(query.bedrooms);
+
+  // Price range as single input like "50000-100000"
+  if (query.price !== undefined && query.price !== null) {
+    const priceStr = query.price.toString(); // convert number to string
+    const [minStr, maxStr] = priceStr.split('-');
+    const min = Number(minStr);
+    const max = Number(maxStr);
+
+    filters.price = {};
+    if (!isNaN(min)) filters.price.$gte = min;
+    if (!isNaN(max)) filters.price.$lte = max;
   }
+
+  // Area range
+if (query.area) {
+  const [minStr, maxStr] = query.area.split('-');
+  const min = Number(minStr);
+  const max = Number(maxStr);
+
+  filters.area = {};
+  if (!isNaN(min)) filters.area.$gte = min;
+  if (!isNaN(max)) filters.area.$lte = max;
+}
+
+  return this.propertyModel.find(filters).exec();
+}
+
+
+  
 
 }

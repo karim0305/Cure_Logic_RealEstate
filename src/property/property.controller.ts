@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Request, Query, UploadedFiles, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Request, Query, UploadedFiles, BadRequestException, Req } from '@nestjs/common';
 import { PropertyService } from './property.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
@@ -44,7 +44,7 @@ export class PropertyController {
   @ApiCreatedResponse({ description: 'Property created successfully', type: CreatePropertyDto })
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(RoleEnum.Seller, RoleEnum.Admin)
+  @Roles(RoleEnum.User, RoleEnum.Admin)
   @UseInterceptors(
     FilesInterceptor('files', 12, {
       storage: diskStorage({
@@ -187,4 +187,9 @@ export class PropertyController {
   acceptDeal(@Param('id') id: string, @Body() body: { agentId: string }, @Request() req) {
     return this.propertyService.acceptDeal(id, body.agentId, req.user);
   }
+
+
+
+
+ 
 }
