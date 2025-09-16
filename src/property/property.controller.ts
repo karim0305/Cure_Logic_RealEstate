@@ -46,7 +46,7 @@ export class PropertyController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.User, RoleEnum.Admin)
   @UseInterceptors(
-    FilesInterceptor('files', 12, {
+    FilesInterceptor('files', 100, {
       storage: diskStorage({
         destination: './uploads/property',
         filename: (req, file, callback) => {

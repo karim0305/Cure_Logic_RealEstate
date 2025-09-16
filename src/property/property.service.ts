@@ -185,41 +185,50 @@ async filterProperties(query: FilterPropertyDto) {
   if (query.city) filters.city = query.city;
   if (query.address) filters.address = query.address;
 
-  
- // Property type filter
-if (query.propertyType) filters.propertyType = query.propertyType;
+  // Property type filter
+  if (query.propertyType) filters.propertyType = query.propertyType;
 
-// Sale/rent type filter (optional)
-if (query.type) filters.type = query.type;
+  // Sale/rent type filter (optional)
+  if (query.type) filters.type = query.type;
 
   // Bedrooms (exact)
-  if (query.bedrooms) filters.bedrooms = Number(query.bedrooms);
+  if (query.bedrooms !== undefined && query.bedrooms !== null) {
+    const bedrooms = Number(query.bedrooms);
+    if (!isNaN(bedrooms)) {
+      filters.bedrooms = bedrooms;
+    }
+  }
 
   // Price range as single input like "50000-100000"
-  if (query.price !== undefined && query.price !== null) {
-    const priceStr = query.price.toString(); // convert number to string
-    const [minStr, maxStr] = priceStr.split('-');
+  if (typeof query.price === 'string' && query.price.includes('-')) {
+    const [minStr, maxStr] = query.price.split('-');
     const min = Number(minStr);
     const max = Number(maxStr);
 
     filters.price = {};
     if (!isNaN(min)) filters.price.$gte = min;
     if (!isNaN(max)) filters.price.$lte = max;
+
+    // If filters.price is still empty, remove it
+    if (Object.keys(filters.price).length === 0) delete filters.price;
   }
 
-  // Area range
-if (query.area) {
-  const [minStr, maxStr] = query.area.split('-');
-  const min = Number(minStr);
-  const max = Number(maxStr);
+  // Area range like "100-500"
+  if (typeof query.area === 'string' && query.area.includes('-')) {
+    const [minStr, maxStr] = query.area.split('-');
+    const min = Number(minStr);
+    const max = Number(maxStr);
 
-  filters.area = {};
-  if (!isNaN(min)) filters.area.$gte = min;
-  if (!isNaN(max)) filters.area.$lte = max;
-}
+    filters.area = {};
+    if (!isNaN(min)) filters.area.$gte = min;
+    if (!isNaN(max)) filters.area.$lte = max;
+
+    if (Object.keys(filters.area).length === 0) delete filters.area;
+  }
 
   return this.propertyModel.find(filters).exec();
 }
+
 
 
   
