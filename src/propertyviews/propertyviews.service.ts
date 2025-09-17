@@ -32,5 +32,14 @@ export class PropertyviewsService {
   }
 
   // ✅ Example: update (optional)
+
+async getAllViews() {
+    return this.propertyViewModel.find().exec();
+  }
+
+  async getViewsByProperty(propertyId: string) {
+    return this.propertyViewModel.find({ propertyId }).exec();
+  }
+  
   
 }
