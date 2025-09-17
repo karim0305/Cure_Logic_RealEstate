@@ -27,6 +27,7 @@ async function bootstrap() {
 
   // Set global prefix from environment variable
   app.setGlobalPrefix(process.env.API_PREFIX ?? 'api');
+  app.set('trust proxy', true);
 //   app.useGlobalPipes(
 //   new ValidationPipe({
 //     whitelist: true,
