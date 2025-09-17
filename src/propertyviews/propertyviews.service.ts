@@ -14,11 +14,18 @@ export class PropertyviewsService {
   ) {}
 
   // ✅ Create a new view
-  async createView(dto: CreatePropertyviewDto): Promise<Propertyview> {
+async createView(
+    dto: CreatePropertyviewDto,
+    ipAddress: string,
+    userAgent: string,
+  ): Promise<Propertyview> {
     const view = new this.propertyViewModel({
-      ...dto,
-      viewedAt: new Date(),
+      ...dto,          // propertyId, userId (from frontend)
+      ipAddress,       // captured by backend
+      userAgent,       // captured by backend
+      viewedAt: new Date(), // backend sets timestamp
     });
+
     return view.save();
   }
 
@@ -41,5 +48,37 @@ async getAllViews() {
     return this.propertyViewModel.find({ propertyId }).exec();
   }
   
+
+  
+async getMonthlyViews() {
+  const monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+
+  const results = await this.propertyViewModel.aggregate([
+    {
+      $group: {
+        _id: { month: { $month: "$viewedAt" } },
+        totalViews: { $sum: 1 },
+      },
+    },
+    { $sort: { "_id.month": 1 } },
+    {
+      $project: {
+        _id: 0,              // 👈 remove _id completely
+        month: "$_id.month", // temporarily keep number month
+        totalViews: 1
+      }
+    }
+  ]);
+
+  return results.map(r => ({
+    month: monthNames[r.month - 1], // convert number → name
+    totalViews: r.totalViews,
+  }));
+}
+
+
   
 }
